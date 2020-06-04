@@ -1,0 +1,2 @@
+class NoElementGame(Exception):
+    pass
