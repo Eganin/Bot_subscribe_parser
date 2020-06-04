@@ -1,8 +1,10 @@
 import sqlite3
 from typing import List, Tuple
+from exceptions import ErrorConnectDatabase
 
 
 class SQLither(object):
+    '''Класс отвечающий за работу с БД'''
     def __init__(self, database: str = 'db') -> None:
         self.connection = sqlite3.connect(database)
         self.cursor = self.connection.cursor()
@@ -57,6 +59,7 @@ class SQLither(object):
             self.connection.close()
 
     def truncate(self):
+        '''очистка таблмцы в крайнем случае'''
         with self.connection:
             self.cursor.execute('DELETE FROM subscriptions')
 

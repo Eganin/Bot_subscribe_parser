@@ -1,3 +1,4 @@
+
 CREATE TABLE subscriptions(
     id INTEGER PRIMARY KEY AUTOINCREMENT
                             UNIQUE
