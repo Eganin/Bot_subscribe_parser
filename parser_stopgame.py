@@ -122,9 +122,9 @@ class StopGame(object):
             return self.new_url + str(href)
 
     def download_image(self, img: str) -> None:
-        '''Загрузка ищображения'''
+        '''Загрузка изображения'''
         p = requests.get(img)
-        out = open("img.jpg", "wb")
+        out = open("img_stop_game.jpg", "wb")
         out.write(p.content)
         out.close()
 

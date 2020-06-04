@@ -4,3 +4,7 @@ class NoElementGame(Exception):
 
 class ErrorConnectDatabase(Exception):
     pass
+
+
+class ErrorAPI(Exception):
+    pass

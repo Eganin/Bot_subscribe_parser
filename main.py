@@ -6,6 +6,7 @@ import text_bot
 from db import SQLither
 from parser_stopgame import StopGame
 import asyncio
+from parser_crackwach_or_API import CrackWatch
 
 load_dotenv()  # load .env
 
@@ -18,7 +19,9 @@ dp = Dispatcher(bot)
 
 database = SQLither('db')  # init to database
 
-parser = StopGame('last_key_parser.txt')  # init to parser
+parser_stop_game = StopGame('last_key_parser.txt')  # init to parser stopgame
+
+parser_crackwatch = CrackWatch('last_key_crackwatch.txt')
 
 
 @dp.message_handler(commands=['start'])
@@ -66,18 +69,19 @@ async def unsubscribe_user(message: types.Message):
 
 
 # асинхронная функция которая проверяет наличие игр
-async def main_malling(time_wait):
+async def main_malling_stop_game(time_wait):
     while True:
         await asyncio.sleep(time_wait)
-        parser.clear()  # очищаем список с ссылками
-        new_games = parser.new_game_href()
+        print('s')
+        parser_stop_game.clear()  # очищаем список с ссылками
+        new_games = parser_stop_game.new_game_href()
         if new_games:  # если появились новые обзоры на сайте
             new_games.reverse()
             for game in new_games:
-                info = parser.parse_game_info(game)  # парсим данные игры
+                info = parser_stop_game.parse_game_info(game)  # парсим данные игры
                 subsciptions = database.get_subscriptions()  # получаем текущих подписчиков
-                parser.download_image(info.poster)
-                with open('img.jpg', 'rb') as photo:
+                parser_stop_game.download_image(info.poster)
+                with open('img_stop_game.jpg', 'rb') as photo:
                     for i in subsciptions:
                         await bot.send_photo(  # отправляем подписчикам инфу об игре
                             i[1],
@@ -85,10 +89,33 @@ async def main_malling(time_wait):
                             caption=info.title + "\n" + "Оценка: " + info.score + "\n" + info.text + "\n\n" + info.href,
                             disable_notification=True
                         )
-                        parser.update_last_key(parser.parse_href(info.href))  # изменяем ключ игры
+                        parser_stop_game.update_last_key(parser_stop_game.parse_href(info.href))  # изменяем ключ игры
+
+
+async def main_malling_crackwatch(time_wait):
+    while True:
+        await asyncio.sleep(time_wait)
+        print('c')
+        result_crackwatch = parser_crackwatch.new_game()
+        if result_crackwatch:
+            subsciptions = database.get_subscriptions()  # получаем текущих подписчиков
+            parser_crackwatch.download_image(result_crackwatch.image)
+            with open('img_crackwatch.jpg', 'rb') as photo:
+                for i in subsciptions:
+                    await bot.send_photo(
+                        i[1],
+                        photo,
+                        caption=result_crackwatch.title + '\n' + 'Защита: ' + result_crackwatch.protections + '\n' + \
+                                'Группа взломщиков:' + result_crackwatch.groups + '\n' + 'Игра вышла: ' + \
+                                result_crackwatch.releaseDate + '\n' + 'Взломана: ' + result_crackwatch.crackDate + \
+                                '\n' + result_crackwatch.href
+                        ,
+                        disable_notification=True
+                    )
 
 
 if __name__ == '__main__':
     database.check_database()  # проверяем существует ли БД
-    dp.loop.create_task(main_malling(30))  # запускаем асинхронную функцию
+    dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронную функцию
+    dp.loop.create_task(main_malling_crackwatch(30))
     executor.start_polling(dp, skip_updates=True)
