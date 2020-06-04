@@ -9,6 +9,7 @@ from exceptions import NoElementGame
 
 class StopGame(object):
     '''Класс отвечающий за парснг сайта stopgame'''
+
     def __init__(self, file_save: str = 'last_key_parser.txt') -> None:
         self.base_url = 'https://stopgame.ru/review/new/'
         self.info = namedtuple('game', ['poster', 'text', 'score', 'title', 'href'])
@@ -29,9 +30,10 @@ class StopGame(object):
         r = requests.get(self.base_url)
         soup = bs4(r.content, 'lxml')
         block_href = soup.select('div.item.article-summary.article-summary-card')
+        print(block_href)
         for i in block_href:
             try:
-                href = self.new_url + str(i.find('a')['href'])
+                href = self.new_url + str(i.find('a', attrs={'href': True})['href'])
                 href_parse = self.parse_href(href)
 
                 if int(href_parse) > int(self.lastkey) and int(href_parse) != int(self.lastkey):  # сверка с ключом

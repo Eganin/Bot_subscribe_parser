@@ -96,6 +96,10 @@ async def main_malling_crackwatch(time_wait):
     while True:
         await asyncio.sleep(time_wait)
         print('c')
+
+
+
+
         result_crackwatch = parser_crackwatch.new_game()
         if result_crackwatch:
             subsciptions = database.get_subscriptions()  # получаем текущих подписчиков
@@ -116,6 +120,6 @@ async def main_malling_crackwatch(time_wait):
 
 if __name__ == '__main__':
     database.check_database()  # проверяем существует ли БД
-    dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронную функцию
-    dp.loop.create_task(main_malling_crackwatch(30))
+    dp.loop.create_task(main_malling_stop_game(10))  # запускаем асинхронную функцию
+    #dp.loop.create_task(main_malling_crackwatch(30))
     executor.start_polling(dp, skip_updates=True)
