@@ -49,8 +49,6 @@ class Habr(object):
 
         else:
             r = requests.get(url=self.base_url_bigdata, params=self.params_bigdata)
-            print(r.url)
-
         return r.text
 
     def parsing_block(self) -> list or bool:
@@ -125,14 +123,3 @@ class Habr(object):
 
     def clear(self) -> None:
         self.list_post[:] = []
-
-
-clf = Habr(flag='bigdata', file_save='last_post_habr_bigdata.txt')
-res = clf.parsing_block()
-if res:
-    print(res)
-    clf.update_last_key(res.key)
-    clf.clear()
-
-else:
-    print('end')

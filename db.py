@@ -7,7 +7,7 @@ import os.path
 class SQLither(object):
     '''Класс отвечающий за работу с БД'''
 
-    def __init__(self, database: str = 'db', flag: str = 'subscriptions_stopgame') -> None:
+    def __init__(self, database: str = 'datasql', flag: str = 'subscriptions_stopgame') -> None:
         self.connection = sqlite3.connect(database)
         self.cursor = self.connection.cursor()
         self.database = flag
@@ -46,7 +46,7 @@ class SQLither(object):
 
     def check_database(self):
         '''Проверка БД , если ее нет инициализирует'''
-        if os.path.exists('db'):
+        if os.path.exists('datasql'):
             pass
 
         else:
@@ -64,5 +64,3 @@ class SQLither(object):
             self.cursor.execute('DELETE FROM subscriptions_stopgame')
 
 
-clf = SQLither()
-print(clf.get_subscriptions())

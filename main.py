@@ -19,10 +19,10 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
 # database
-database_stopgame = SQLither('db', 'subscriptions_stopgame')  # init to database
-database_crackwatch = SQLither('db', 'subscriptions_crackwatch')
-database_habr_python = SQLither('db', 'subscriptions_habr_python')
-database_habr_big_data = SQLither('db', 'subscriptions_habr_bigdata')
+database_stopgame = SQLither('datasql', 'subscriptions_stopgame')  # init to database
+database_crackwatch = SQLither('datasql', 'subscriptions_crackwatch')
+database_habr_python = SQLither('datasql', 'subscriptions_habr_python')
+database_habr_big_data = SQLither('datasql', 'subscriptions_habr_bigdata')
 
 # parser
 parser_stop_game = StopGame('last_key_parser.txt')  # init to parser stopgame
@@ -210,17 +210,45 @@ async def main_malling_crackwatch(time_wait):
 async def mail_malling_habr_python(time_wait):
     while True:
         await asyncio.sleep(time_wait)
-        result_habr = 1
+        res = parser_habr_python.parsing_block()
+        subsciptions = database_habr_python.get_subscriptions()
+        if res:
+            print(res)
+            for i in subsciptions:
+                await bot.send_message(
+                    i[1],
+                    res
+                )
+            parser_habr_python.update_last_key(res.key)
+            parser_habr_python.clear()
+
+        else:
+            print('end')
 
 
 async def mail_malling_habr_big_data(time_wait):
     while True:
         await asyncio.sleep(time_wait)
-        result_habr = 1
+        res = parser_habr_big_data.parsing_block()
+        subsciptions = database_habr_big_data.get_subscriptions()
+        if res:
+            print(res)
+            for i in subsciptions:
+                await bot.send_message(
+                    i[1],
+                    res
+                )
+            parser_habr_big_data.update_last_key(res.key)
+            parser_habr_big_data.clear()
+
+        else:
+            print('end')
 
 
 if __name__ == '__main__':
-    # database_stopgame.check_database()  # проверяем существует ли БД
+    database_stopgame.check_database()  # проверяем существует ли БД
     dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронную функцию
     dp.loop.create_task(main_malling_crackwatch(30))
+    dp.loop.create_task(mail_malling_habr_big_data(30))
+    dp.loop.create_task(mail_malling_habr_python(30))
     executor.start_polling(dp, skip_updates=True)
