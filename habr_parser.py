@@ -15,7 +15,7 @@ class Habr(object):
         self.params_python = {'q': 'python',
                               'order_by': 'date'}
 
-        self.params_bigdata = {'q': 'big%20data',
+        self.params_bigdata = {'q': 'big data',
                                'order_by': 'date'}
 
         self.flag = flag
@@ -49,6 +49,7 @@ class Habr(object):
 
         else:
             r = requests.get(url=self.base_url_bigdata, params=self.params_bigdata)
+            print(r.url)
 
         return r.text
 

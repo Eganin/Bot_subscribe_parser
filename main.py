@@ -7,6 +7,7 @@ from db import SQLither
 from parser_stopgame import StopGame
 import asyncio
 from parser_crackwach_or_API import CrackWatch
+from habr_parser import Habr
 
 load_dotenv()  # load .env
 
@@ -17,12 +18,17 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
+# database
 database_stopgame = SQLither('db', 'subscriptions_stopgame')  # init to database
 database_crackwatch = SQLither('db', 'subscriptions_crackwatch')
+database_habr_python = SQLither('db', 'subscriptions_habr_python')
+database_habr_big_data = SQLither('db', 'subscriptions_habr_bigdata')
 
+# parser
 parser_stop_game = StopGame('last_key_parser.txt')  # init to parser stopgame
-
 parser_crackwatch = CrackWatch('last_key_crackwatch.txt')
+parser_habr_python = Habr(flag='python', file_save='last_post_habr_python.txt')
+parser_habr_big_data = Habr(flag='bigdata', file_save='last_post_habr_bigdata.txt')
 
 
 @dp.message_handler(commands=['start'])
@@ -95,6 +101,66 @@ async def unsubscribe_user(message: types.Message):
         await message.answer(text_bot.UNSUBSCRIBE)
 
 
+@dp.message_handler(commands=['subscribe_habr_python'])
+async def subscribe_user(message: types.Message):
+    '''Функция отвечающая за подписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_habr_python.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с активной подпиской'''
+        database_habr_python.add_subscriber(user_id, True)
+        await  message.answer(text_bot.SUBSCRIBE_NEW)
+
+    else:
+        '''иначе присваем юзеру статус подписчика'''
+        database_habr_python.update_subscriber(user_id, True)
+        await message.answer(text_bot.SUBSCRIBE_OLD)
+
+
+@dp.message_handler(commands=['unsubscribe_habr_python'])
+async def unsubscribe_user(message: types.Message):
+    '''Функция отвечающая за отписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_habr_python.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
+        database_habr_python.add_subscriber(user_id, False)
+        await  message.answer(text_bot.UNSUBSCRIBE)
+
+    else:
+        '''иначе присваем юзеру статус неподписчика'''
+        database_habr_python.update_subscriber(user_id, False)
+        await message.answer(text_bot.UNSUBSCRIBE)
+
+
+@dp.message_handler(commands=['subscribe_habr_bigdata'])
+async def subscribe_user(message: types.Message):
+    '''Функция отвечающая за подписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_habr_big_data.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с активной подпиской'''
+        database_habr_big_data.add_subscriber(user_id, True)
+        await  message.answer(text_bot.SUBSCRIBE_NEW)
+
+    else:
+        '''иначе присваем юзеру статус подписчика'''
+        database_habr_big_data.update_subscriber(user_id, True)
+        await message.answer(text_bot.SUBSCRIBE_OLD)
+
+
+@dp.message_handler(commands=['unsubscribe_habr_bigdata'])
+async def unsubscribe_user(message: types.Message):
+    '''Функция отвечающая за отписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_habr_big_data.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
+        database_habr_big_data.add_subscriber(user_id, False)
+        await  message.answer(text_bot.UNSUBSCRIBE)
+
+    else:
+        '''иначе присваем юзеру статус неподписчика'''
+        database_habr_big_data.update_subscriber(user_id, False)
+        await message.answer(text_bot.UNSUBSCRIBE)
+
+
 # асинхронная функция которая проверяет наличие игр
 async def main_malling_stop_game(time_wait):
     while True:
@@ -139,6 +205,18 @@ async def main_malling_crackwatch(time_wait):
                         ,
                         disable_notification=True
                     )
+
+
+async def mail_malling_habr_python(time_wait):
+    while True:
+        await asyncio.sleep(time_wait)
+        result_habr = 1
+
+
+async def mail_malling_habr_big_data(time_wait):
+    while True:
+        await asyncio.sleep(time_wait)
+        result_habr = 1
 
 
 if __name__ == '__main__':
