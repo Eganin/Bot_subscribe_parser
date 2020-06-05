@@ -7,6 +7,7 @@ from lxml import etree
 
 
 class Habr(object):
+    '''Класс отвечающий за парсинг habr'''
     def __init__(self, flag: str = 'python', file_save: str = 'last_post_habr_python.txt') -> None:
         self.base_url_python = 'https://habr.com/ru/search/?target_type=posts'
 
@@ -42,6 +43,7 @@ class Habr(object):
                 file.write(self.lastpost)
 
     def get_page(self) -> str:
+        '''получение содержимого веб страницы в зависимости от flag '''
         if self.flag == 'python':
             r = requests.get(url=self.base_url_python, params=self.params_python)
 
@@ -50,6 +52,7 @@ class Habr(object):
         return r.text
 
     def parsing_block(self) -> list or bool:
+        '''Детальный парсинг'''
         block_parse = self.soup.select('article', attrs={'class': 'post.post_preview',
                                                          'lang': 'ru'})
         id = str(
@@ -59,8 +62,6 @@ class Habr(object):
             href = i.find('a', attrs={'class': 'post__title_link'})['href'].strip()
             key = self.parse_href(href)
             if int(key) > int(self.lastpost) and int(key) != int(self.lastpost):
-                print(key)
-                print(self.lastpost)
                 title = i.find('a', attrs={'class': 'post__title_link'}).text.strip()
                 tags = i.select('li', attrs={'class': 'inline-list__item.inline-list__item_hub'})
 
@@ -99,6 +100,7 @@ class Habr(object):
         return result
 
     def get_last_post(self) -> str:
+        '''Получение последнего поста'''
         block_parse = self.soup.select('article', attrs={'class': 'post.post_preview',
                                                          'lang': 'ru'})
         for i in block_parse:

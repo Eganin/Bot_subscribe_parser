@@ -8,6 +8,7 @@ from parser_stopgame import StopGame
 import asyncio
 from parser_crackwach_or_API import CrackWatch
 from habr_parser import Habr
+from parser_tproger import Tproger
 
 load_dotenv()  # load .env
 
@@ -23,27 +24,29 @@ database_stopgame = SQLither('datasql', 'subscriptions_stopgame')  # init to dat
 database_crackwatch = SQLither('datasql', 'subscriptions_crackwatch')
 database_habr_python = SQLither('datasql', 'subscriptions_habr_python')
 database_habr_big_data = SQLither('datasql', 'subscriptions_habr_bigdata')
+database_tproger = SQLither('datasql', 'subscriptions_tproger')
 
 # parser
 parser_stop_game = StopGame('last_key_parser.txt')  # init to parser stopgame
 parser_crackwatch = CrackWatch('last_key_crackwatch.txt')
 parser_habr_python = Habr(flag='python', file_save='last_post_habr_python.txt')
 parser_habr_big_data = Habr(flag='bigdata', file_save='last_post_habr_bigdata.txt')
+parser_tproger = Tproger('last_key_tpoger.txt')
 
 
 @dp.message_handler(commands=['start'])
-async def start_bot(message: types.Message):
+async def start_bot(message: types.Message) -> None:
     await message.answer(text_bot.HELLO)
 
 
 @dp.message_handler(commands=['help'])
-async def help_bot(message: types.Message):
+async def help_bot(message: types.Message) -> None:
     await message.answer(text_bot.HELP)
 
 
 @dp.message_handler(commands=['subscribe_stopgame'])
-async def subscribe_user(message: types.Message):
-    '''Функция отвечающая за подписку юзера'''
+async def subscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за подписку юзера на рассылку stopgame'''
     user_id = str(message.from_user.id)
     if not database_stopgame.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с активной подпиской'''
@@ -57,8 +60,8 @@ async def subscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['unsubscribe_stopgame'])
-async def unsubscribe_user(message: types.Message):
-    '''Функция отвечающая за отписку юзера'''
+async def unsubscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за отписку юзера на рассылку stopgame'''
     user_id = str(message.from_user.id)
     if not database_stopgame.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
@@ -72,8 +75,8 @@ async def unsubscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['subscribe_crackwatch'])
-async def subscribe_user(message: types.Message):
-    '''Функция отвечающая за подписку юзера'''
+async def subscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за подписку юзера на рассылку crackwatch'''
     user_id = str(message.from_user.id)
     if not database_crackwatch.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с активной подпиской'''
@@ -87,8 +90,8 @@ async def subscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['unsubscribe_crackwatch'])
-async def unsubscribe_user(message: types.Message):
-    '''Функция отвечающая за отписку юзера'''
+async def unsubscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за отписку юзера на расссылку crackwatch'''
     user_id = str(message.from_user.id)
     if not database_crackwatch.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
@@ -102,8 +105,8 @@ async def unsubscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['subscribe_habr_python'])
-async def subscribe_user(message: types.Message):
-    '''Функция отвечающая за подписку юзера'''
+async def subscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за подписку юзера на рассылку habr python'''
     user_id = str(message.from_user.id)
     if not database_habr_python.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с активной подпиской'''
@@ -117,8 +120,8 @@ async def subscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['unsubscribe_habr_python'])
-async def unsubscribe_user(message: types.Message):
-    '''Функция отвечающая за отписку юзера'''
+async def unsubscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за отписку юзера на расслыку habr python'''
     user_id = str(message.from_user.id)
     if not database_habr_python.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
@@ -132,8 +135,8 @@ async def unsubscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['subscribe_habr_bigdata'])
-async def subscribe_user(message: types.Message):
-    '''Функция отвечающая за подписку юзера'''
+async def subscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за подписку юзера на habr big data'''
     user_id = str(message.from_user.id)
     if not database_habr_big_data.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с активной подпиской'''
@@ -147,8 +150,8 @@ async def subscribe_user(message: types.Message):
 
 
 @dp.message_handler(commands=['unsubscribe_habr_bigdata'])
-async def unsubscribe_user(message: types.Message):
-    '''Функция отвечающая за отписку юзера'''
+async def unsubscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за отписку юзера на рассылку habr big data'''
     user_id = str(message.from_user.id)
     if not database_habr_big_data.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
@@ -161,8 +164,38 @@ async def unsubscribe_user(message: types.Message):
         await message.answer(text_bot.UNSUBSCRIBE)
 
 
-# асинхронная функция которая проверяет наличие игр
-async def main_malling_stop_game(time_wait):
+@dp.message_handler(commands=['subscribe_tproger_python'])
+async def subscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за подписку юзера на рассылку stopgame'''
+    user_id = str(message.from_user.id)
+    if not database_tproger.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с активной подпиской'''
+        database_tproger.add_subscriber(user_id, True)
+        await  message.answer(text_bot.SUBSCRIBE_NEW)
+
+    else:
+        '''иначе присваем юзеру статус подписчика'''
+        database_tproger.update_subscriber(user_id, True)
+        await message.answer(text_bot.SUBSCRIBE_OLD)
+
+
+@dp.message_handler(commands=['unsubscribe_tproger_python'])
+async def unsubscribe_user(message: types.Message) -> None:
+    '''Функция отвечающая за отписку юзера на рассылку stopgame'''
+    user_id = str(message.from_user.id)
+    if not database_tproger.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
+        database_tproger.add_subscriber(user_id, False)
+        await  message.answer(text_bot.UNSUBSCRIBE)
+
+    else:
+        '''иначе присваем юзеру статус неподписчика'''
+        database_tproger.update_subscriber(user_id, False)
+        await message.answer(text_bot.UNSUBSCRIBE)
+
+
+# асинхронная функция
+async def main_malling_stop_game(time_wait: int) -> None:
     while True:
         await asyncio.sleep(time_wait)
         parser_stop_game.clear()  # очищаем список с ссылками
@@ -184,7 +217,7 @@ async def main_malling_stop_game(time_wait):
                         parser_stop_game.update_last_key(parser_stop_game.parse_href(info.href))  # изменяем ключ игры
 
 
-async def main_malling_crackwatch(time_wait):
+async def main_malling_crackwatch(time_wait: int) -> None:
     while True:
         await asyncio.sleep(time_wait)
         result_crackwatch = parser_crackwatch.new_game()
@@ -205,7 +238,7 @@ async def main_malling_crackwatch(time_wait):
                     )
 
 
-async def mail_malling_habr_python(time_wait):
+async def mail_malling_habr_python(time_wait: int) -> None:
     while True:
         await asyncio.sleep(time_wait)
         res = parser_habr_python.parsing_block()
@@ -220,7 +253,7 @@ async def mail_malling_habr_python(time_wait):
             parser_habr_python.clear()
 
 
-async def mail_malling_habr_big_data(time_wait):
+async def mail_malling_habr_big_data(time_wait: int) -> None:
     while True:
         await asyncio.sleep(time_wait)
         res = parser_habr_big_data.parsing_block()
@@ -235,10 +268,26 @@ async def mail_malling_habr_big_data(time_wait):
             parser_habr_big_data.clear()
 
 
+async def mail_malling_tproger_python(time_wait: int) -> None:
+    while True:
+        await asyncio.sleep(time_wait)
+        res = parser_tproger.parsing()
+        print(res)
+        subsciptions = database_habr_big_data.get_subscriptions()
+        if res:
+            for i in subsciptions:
+                await bot.send_message(
+                    i[1],
+                    str('Название: ' + res.title + '\n\n' + res.text + '\n' + res.href)
+                )
+            parser_tproger.update_last_key(res.key)
+
+
 if __name__ == '__main__':
     database_stopgame.check_database()  # проверяем существует ли БД
-    dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронную функцию
+    dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронные функции
     dp.loop.create_task(main_malling_crackwatch(30))
     dp.loop.create_task(mail_malling_habr_big_data(30))
     dp.loop.create_task(mail_malling_habr_python(30))
-    executor.start_polling(dp, skip_updates=True)
+    dp.loop.create_task(mail_malling_tproger_python(30))
+    executor.start_polling(dp, skip_updates=True)  # запускаем бота с игнором ошибок

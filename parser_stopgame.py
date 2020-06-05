@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup as bs4
 from collections import namedtuple
 from typing import List, NamedTuple
 import re
-from exceptions import NoElementGame
 
 
 class StopGame(object):
@@ -40,7 +39,6 @@ class StopGame(object):
 
             except:
                 href = ''
-                raise NoElementGame('Нет данных')
 
         return self.href_game
 
@@ -53,21 +51,18 @@ class StopGame(object):
 
         except:
             poster = ''
-            raise NoElementGame('Нет данных')
 
         try:
             excpert_text = soup.select('.article.article-show')[0].text[0:400] + '...'
 
         except:
             excpert_text = ''
-            raise NoElementGame('Нет данных')
 
         try:
             score = self.sum_score(soup.select('.game-stopgame-score > .score')[0]['class'][1])
 
         except:
             score = ''
-            raise NoElementGame('Нет данных')
 
         block_game = soup.select('div.game-details')
         for info in block_game:
@@ -76,14 +71,12 @@ class StopGame(object):
 
             except:
                 title = ''
-                raise NoElementGame('Нет данных')
 
             try:
                 href = url
 
             except:
                 href = ''
-                raise NoElementGame('Нет данных')
 
             return self.info(poster=poster.group(1),
                              text=excpert_text,

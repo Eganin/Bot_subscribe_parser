@@ -1,6 +1,5 @@
 import sqlite3
 from typing import List, Tuple
-from exceptions import ErrorConnectDatabase
 import os.path
 
 

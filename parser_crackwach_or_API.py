@@ -5,7 +5,9 @@ import os.path
 
 
 class CrackWatch(object):
-    def __init__(self, file_save: str = 'last_key_crackwatch.txt'):
+    '''Класс отвечающий за парсинг crackwatch'''
+
+    def __init__(self, file_save: str = 'last_key_crackwatch.txt') -> None:
         self.base_url = 'https://api.crackwatch.com/api/games'
 
         self.games_info = namedtuple('game',
@@ -30,6 +32,7 @@ class CrackWatch(object):
                 file.write(self.last_name)
 
     def get_game_json(self, params: dict) -> str:
+        '''Получение страницы с запросом'''
         r = requests.get(self.base_url, params=params)
         return json.loads(r.text)
 
@@ -49,6 +52,7 @@ class CrackWatch(object):
         )
 
     def new_game(self) -> namedtuple or bool:
+        '''Возвращвет namedtuple с данными игры , сделан бесконечный цикл т.к сервер переодически не отвечает'''
         self.clear()
         while True:
             try:
@@ -65,6 +69,7 @@ class CrackWatch(object):
                 pass
 
     def last_game(self) -> namedtuple:
+        '''Возвращает данные последней игры'''
         while True:
             try:
                 res_api = self.get_game_json(self.get_crackgame)
@@ -78,6 +83,7 @@ class CrackWatch(object):
                 pass
 
     def update_name(self, last_name: str) -> str:
+        '''Обновление файла'''
         self.last_name = last_name
         with open(self.file_save, "r+") as f:
             data = f.read()

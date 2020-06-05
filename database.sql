@@ -36,3 +36,12 @@ CREATE TABLE subscriptions_habr_bigdata(
     status BOOLEAN  NOT NULL DEFAULT (TRUE)
 
 );
+
+CREATE TABLE subscriptions_tproger(
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+                            UNIQUE
+                            NOT NULL,
+    user_id VARCHAR (255) NOT NULL
+                          UNIQUE ,
+    status BOOLEAN  NOT NULL DEFAULT (TRUE)
+);
