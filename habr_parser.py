@@ -30,8 +30,6 @@ class Habr(object):
 
         self.list_post = []
 
-        self.img = []
-
         self.post = namedtuple('post', ['title', 'href', 'tags', 'text', 'key'])
 
         if os.path.exists(self.file_save):
@@ -61,6 +59,8 @@ class Habr(object):
             href = i.find('a', attrs={'class': 'post__title_link'})['href'].strip()
             key = self.parse_href(href)
             if int(key) > int(self.lastpost) and int(key) != int(self.lastpost):
+                print(key)
+                print(self.lastpost)
                 title = i.find('a', attrs={'class': 'post__title_link'}).text.strip()
                 tags = i.select('li', attrs={'class': 'inline-list__item.inline-list__item_hub'})
 
@@ -89,7 +89,7 @@ class Habr(object):
 
     def update_last_key(self, result: str) -> str:
         '''обновление кдюча на последнюю вышедшую игру'''
-        self.lastkey = result
+        self.lastpost = result
         with open(self.file_save, "r+") as f:
             data = f.read()
             f.seek(0)

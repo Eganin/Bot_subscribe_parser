@@ -165,7 +165,6 @@ async def unsubscribe_user(message: types.Message):
 async def main_malling_stop_game(time_wait):
     while True:
         await asyncio.sleep(time_wait)
-        print('s')
         parser_stop_game.clear()  # очищаем список с ссылками
         new_games = parser_stop_game.new_game_href()
         if new_games:  # если появились новые обзоры на сайте
@@ -174,7 +173,6 @@ async def main_malling_stop_game(time_wait):
                 info = parser_stop_game.parse_game_info(game)  # парсим данные игры
                 subsciptions = database_stopgame.get_subscriptions()  # получаем текущих подписчиков
                 parser_stop_game.download_image(info.poster)
-                print(info)
                 with open('img_stop_game.jpg', 'rb') as photo:
                     for i in subsciptions:
                         await bot.send_photo(  # отправляем подписчикам инфу об игре
@@ -213,17 +211,13 @@ async def mail_malling_habr_python(time_wait):
         res = parser_habr_python.parsing_block()
         subsciptions = database_habr_python.get_subscriptions()
         if res:
-            print(res)
             for i in subsciptions:
                 await bot.send_message(
                     i[1],
-                    res
+                    str('Название: ' + res.title + '\n' + 'Тэги: ' + res.tags + '\n\n' + res.text + '\n' + res.href)
                 )
             parser_habr_python.update_last_key(res.key)
             parser_habr_python.clear()
-
-        else:
-            print('end')
 
 
 async def mail_malling_habr_big_data(time_wait):
@@ -232,17 +226,13 @@ async def mail_malling_habr_big_data(time_wait):
         res = parser_habr_big_data.parsing_block()
         subsciptions = database_habr_big_data.get_subscriptions()
         if res:
-            print(res)
             for i in subsciptions:
                 await bot.send_message(
                     i[1],
-                    res
+                    str('Название: ' + res.title + '\n' + 'Тэги: ' + res.tags + '\n\n' + res.text + '\n' + res.href)
                 )
             parser_habr_big_data.update_last_key(res.key)
             parser_habr_big_data.clear()
-
-        else:
-            print('end')
 
 
 if __name__ == '__main__':
