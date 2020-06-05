@@ -7,11 +7,18 @@ from lxml import etree
 
 
 class Habr(object):
-    def __init__(self, file_save: str = 'last_post_habr.txt') -> None:
-        self.base_url = 'https://habr.com/ru/search/?target_type=posts'
+    def __init__(self, flag: str = 'python', file_save: str = 'last_post_habr_python.txt') -> None:
+        self.base_url_python = 'https://habr.com/ru/search/?target_type=posts'
 
-        self.params = {'q': 'python',
-                       'order_by': 'date'}
+        self.base_url_bigdata = 'https://habr.com/ru/search/?target_type=posts'
+
+        self.params_python = {'q': 'python',
+                              'order_by': 'date'}
+
+        self.params_bigdata = {'q': 'big%20data',
+                               'order_by': 'date'}
+
+        self.flag = flag
 
         self.soup = bs4(self.get_page(), 'lxml')
 
@@ -22,6 +29,8 @@ class Habr(object):
         self.text = []
 
         self.list_post = []
+
+        self.img = []
 
         self.post = namedtuple('post', ['title', 'href', 'tags', 'text', 'key'])
 
@@ -35,7 +44,12 @@ class Habr(object):
                 file.write(self.lastpost)
 
     def get_page(self) -> str:
-        r = requests.get(url=self.base_url, params=self.params)
+        if self.flag == 'python':
+            r = requests.get(url=self.base_url_python, params=self.params_python)
+
+        else:
+            r = requests.get(url=self.base_url_bigdata, params=self.params_bigdata)
+
         return r.text
 
     def parsing_block(self) -> list or bool:
@@ -69,7 +83,7 @@ class Habr(object):
                 pass
 
         if self.list_post:
-            return self.list_post
+            return self.list_post[0]
 
         else:
             return False
@@ -112,12 +126,11 @@ class Habr(object):
         self.list_post[:] = []
 
 
-clf = Habr()
+clf = Habr(flag='bigdata', file_save='last_post_habr_bigdata.txt')
 res = clf.parsing_block()
 if res:
-    clf.update_last_key(res[0].key)
-    for i in res:
-        print(i)
+    print(res)
+    clf.update_last_key(res.key)
     clf.clear()
 
 else:
