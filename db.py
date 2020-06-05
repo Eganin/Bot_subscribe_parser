@@ -1,6 +1,7 @@
 import sqlite3
 from typing import List, Tuple
 from exceptions import ErrorConnectDatabase
+import os.path
 
 
 class SQLither(object):
@@ -45,11 +46,7 @@ class SQLither(object):
 
     def check_database(self):
         '''Проверка БД , если ее нет инициализирует'''
-        self.cursor.execute("SELECT name FROM sqlite_master "
-                            "WHERE type='table' AND name='subscriptions_stopgame' AND name ='subscriptions_crackwatch'")
-
-        table_exists = self.cursor.fetchall()
-        if table_exists:
+        if os.path.exists('db'):
             pass
 
         else:

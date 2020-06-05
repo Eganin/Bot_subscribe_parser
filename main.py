@@ -108,6 +108,7 @@ async def main_malling_stop_game(time_wait):
                 info = parser_stop_game.parse_game_info(game)  # парсим данные игры
                 subsciptions = database_stopgame.get_subscriptions()  # получаем текущих подписчиков
                 parser_stop_game.download_image(info.poster)
+                print(info)
                 with open('img_stop_game.jpg', 'rb') as photo:
                     for i in subsciptions:
                         await bot.send_photo(  # отправляем подписчикам инфу об игре
@@ -122,8 +123,6 @@ async def main_malling_stop_game(time_wait):
 async def main_malling_crackwatch(time_wait):
     while True:
         await asyncio.sleep(time_wait)
-        print('c')
-
         result_crackwatch = parser_crackwatch.new_game()
         if result_crackwatch:
             subsciptions = database_crackwatch.get_subscriptions()  # получаем текущих подписчиков
