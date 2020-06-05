@@ -5,19 +5,21 @@ from exceptions import ErrorConnectDatabase
 
 class SQLither(object):
     '''Класс отвечающий за работу с БД'''
-    def __init__(self, database: str = 'db') -> None:
+
+    def __init__(self, database: str = 'db', flag: str = 'subscriptions_stopgame') -> None:
         self.connection = sqlite3.connect(database)
         self.cursor = self.connection.cursor()
+        self.database = flag
 
     def get_subscriptions(self, status: bool = True) -> List[Tuple[int, str, int]]:
         '''Получение все подписчиков бота'''
         with self.connection:
-            return self.cursor.execute("SELECT * FROM subscriptions WHERE status = ?", (status,)).fetchall()
+            return self.cursor.execute(f"SELECT * FROM {self.database} WHERE status = ?", (status,)).fetchall()
 
     def subsribe_exists(self, user_id: str) -> bool:
         '''Проверка на наличие юзера в БД'''
         with self.connection:
-            availability_user = self.connection.execute('SELECT * FROM subscriptions WHERE user_id = ?',
+            availability_user = self.connection.execute(f'SELECT * FROM {self.database} WHERE user_id = ?',
                                                         (user_id,)).fetchall()
 
             return bool(len(availability_user))
@@ -25,18 +27,18 @@ class SQLither(object):
     def add_subscriber(self, user_id: str, status: bool = True) -> List[None]:
         '''Добавление нового подписчика в БД'''
         with self.connection:
-            return self.cursor.execute('INSERT INTO subscriptions (user_id , status) VALUES (? , ?)',
+            return self.cursor.execute(f'INSERT INTO {self.database} (user_id , status) VALUES (? , ?)',
                                        (user_id, status,)).fetchall()
 
     def update_subscriber(self, user_id: str, status: bool = True) -> List[None]:
         '''Обновление статуса подписки , для юзеров которые уже есть в БД'''
         with self.connection:
-            return self.cursor.execute('UPDATE subscriptions  SET status = ? WHERE user_id = ?',
+            return self.cursor.execute(f'UPDATE {self.database}  SET status = ? WHERE user_id = ?',
                                        (status, user_id,)).fetchall()
 
     def init_database(self):  # or os.system('sqlite3 db < database.sql')
         '''Инициализация БД'''
-        with open("createdb.sql", "r") as f:
+        with open("database.sql", "r") as f:
             sql = f.read()
         self.cursor.executescript(sql)
         self.connection.commit()
@@ -44,7 +46,7 @@ class SQLither(object):
     def check_database(self):
         '''Проверка БД , если ее нет инициализирует'''
         self.cursor.execute("SELECT name FROM sqlite_master "
-                            "WHERE type='table' AND name='subscriptions'")
+                            "WHERE type='table' AND name='subscriptions_stopgame' AND name ='subscriptions_crackwatch'")
 
         table_exists = self.cursor.fetchall()
         if table_exists:
@@ -61,6 +63,9 @@ class SQLither(object):
     def truncate(self):
         '''очистка таблмцы в крайнем случае'''
         with self.connection:
-            self.cursor.execute('DELETE FROM subscriptions')
+            self.cursor.execute('DELETE FROM subscriptions_crackwatch')
+            self.cursor.execute('DELETE FROM subscriptions_stopgame')
 
 
+clf = SQLither()
+print(clf.get_subscriptions())

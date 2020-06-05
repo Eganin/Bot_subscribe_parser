@@ -53,7 +53,6 @@ class CrackWatch(object):
         while True:
             try:
                 res_api = self.get_game_json(self.get_crackgame)
-                print('accept')
                 for i in res_api:
                     answer = self.parse_answer_api(i)
                     if answer.key != self.last_name:
@@ -63,7 +62,6 @@ class CrackWatch(object):
                     else:
                         return False
             except:
-                print('error')
                 pass
 
     def last_game(self) -> namedtuple:

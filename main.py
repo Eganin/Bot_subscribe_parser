@@ -17,7 +17,8 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
-database = SQLither('db')  # init to database
+database_stopgame = SQLither('db', 'subscriptions_stopgame')  # init to database
+database_crackwatch = SQLither('db', 'subscriptions_crackwatch')
 
 parser_stop_game = StopGame('last_key_parser.txt')  # init to parser stopgame
 
@@ -34,37 +35,63 @@ async def help_bot(message: types.Message):
     await message.answer(text_bot.HELP)
 
 
-@dp.message_handler(commands=['subscribe'])
+@dp.message_handler(commands=['subscribe_stopgame'])
 async def subscribe_user(message: types.Message):
     '''Функция отвечающая за подписку юзера'''
     user_id = str(message.from_user.id)
-    if not database.subsribe_exists(user_id):
+    if not database_stopgame.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с активной подпиской'''
-        database.add_subscriber(user_id, True)
-        database.close()  # закрытие соединения с БД
+        database_stopgame.add_subscriber(user_id, True)
         await  message.answer(text_bot.SUBSCRIBE_NEW)
 
     else:
         '''иначе присваем юзеру статус подписчика'''
-        database.update_subscriber(user_id, True)
-        database.close()
+        database_stopgame.update_subscriber(user_id, True)
         await message.answer(text_bot.SUBSCRIBE_OLD)
 
 
-@dp.message_handler(commands=['unsubscribe'])
+@dp.message_handler(commands=['unsubscribe_stopgame'])
 async def unsubscribe_user(message: types.Message):
     '''Функция отвечающая за отписку юзера'''
     user_id = str(message.from_user.id)
-    if not database.subsribe_exists(user_id):
+    if not database_stopgame.subsribe_exists(user_id):
         '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
-        database.add_subscriber(user_id, False)
-        database.close()
+        database_stopgame.add_subscriber(user_id, False)
         await  message.answer(text_bot.UNSUBSCRIBE)
 
     else:
         '''иначе присваем юзеру статус неподписчика'''
-        database.update_subscriber(user_id, False)
-        database.close()
+        database_stopgame.update_subscriber(user_id, False)
+        await message.answer(text_bot.UNSUBSCRIBE)
+
+
+@dp.message_handler(commands=['subscribe_crackwatch'])
+async def subscribe_user(message: types.Message):
+    '''Функция отвечающая за подписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_crackwatch.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с активной подпиской'''
+        database_crackwatch.add_subscriber(user_id, True)
+        await  message.answer(text_bot.SUBSCRIBE_NEW)
+
+    else:
+        '''иначе присваем юзеру статус подписчика'''
+        database_crackwatch.update_subscriber(user_id, True)
+        await message.answer(text_bot.SUBSCRIBE_OLD)
+
+
+@dp.message_handler(commands=['unsubscribe_crackwatch'])
+async def unsubscribe_user(message: types.Message):
+    '''Функция отвечающая за отписку юзера'''
+    user_id = str(message.from_user.id)
+    if not database_crackwatch.subsribe_exists(user_id):
+        '''Если юзера нет в БД добавдяем его с неактивной подпиской'''
+        database_crackwatch.add_subscriber(user_id, False)
+        await  message.answer(text_bot.UNSUBSCRIBE)
+
+    else:
+        '''иначе присваем юзеру статус неподписчика'''
+        database_crackwatch.update_subscriber(user_id, False)
         await message.answer(text_bot.UNSUBSCRIBE)
 
 
@@ -79,7 +106,7 @@ async def main_malling_stop_game(time_wait):
             new_games.reverse()
             for game in new_games:
                 info = parser_stop_game.parse_game_info(game)  # парсим данные игры
-                subsciptions = database.get_subscriptions()  # получаем текущих подписчиков
+                subsciptions = database_stopgame.get_subscriptions()  # получаем текущих подписчиков
                 parser_stop_game.download_image(info.poster)
                 with open('img_stop_game.jpg', 'rb') as photo:
                     for i in subsciptions:
@@ -97,12 +124,9 @@ async def main_malling_crackwatch(time_wait):
         await asyncio.sleep(time_wait)
         print('c')
 
-
-
-
         result_crackwatch = parser_crackwatch.new_game()
         if result_crackwatch:
-            subsciptions = database.get_subscriptions()  # получаем текущих подписчиков
+            subsciptions = database_crackwatch.get_subscriptions()  # получаем текущих подписчиков
             parser_crackwatch.download_image(result_crackwatch.image)
             with open('img_crackwatch.jpg', 'rb') as photo:
                 for i in subsciptions:
@@ -119,7 +143,7 @@ async def main_malling_crackwatch(time_wait):
 
 
 if __name__ == '__main__':
-    database.check_database()  # проверяем существует ли БД
-    dp.loop.create_task(main_malling_stop_game(10))  # запускаем асинхронную функцию
-    #dp.loop.create_task(main_malling_crackwatch(30))
+    # database_stopgame.check_database()  # проверяем существует ли БД
+    dp.loop.create_task(main_malling_stop_game(30))  # запускаем асинхронную функцию
+    dp.loop.create_task(main_malling_crackwatch(30))
     executor.start_polling(dp, skip_updates=True)

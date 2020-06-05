@@ -30,7 +30,6 @@ class StopGame(object):
         r = requests.get(self.base_url)
         soup = bs4(r.content, 'lxml')
         block_href = soup.select('div.item.article-summary.article-summary-card')
-        print(block_href)
         for i in block_href:
             try:
                 href = self.new_url + str(i.find('a', attrs={'href': True})['href'])
