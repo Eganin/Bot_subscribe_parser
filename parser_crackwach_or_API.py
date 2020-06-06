@@ -2,6 +2,7 @@ import requests
 import json
 from collections import namedtuple
 import os.path
+from structures import PostCrackWatch
 
 
 class CrackWatch(object):
@@ -10,9 +11,9 @@ class CrackWatch(object):
     def __init__(self, file_save: str = 'last_key_crackwatch.txt') -> None:
         self.base_url = 'https://api.crackwatch.com/api/games'
 
-        self.games_info = namedtuple('game',
-                                     ['title', 'protections', 'groups', 'releaseDate', 'image', 'crackDate', 'href',
-                                      'key'])
+        #self.games_info = namedtuple('game',
+                                     #['title', 'protections', 'groups', 'releaseDate', 'image', 'crackDate', 'href',
+                                      #'key'])
         'словарь с параметрами для запроса'
         self.get_crackgame = {'page': 0,
                               'is_released': 'true',
@@ -40,7 +41,7 @@ class CrackWatch(object):
         return str(href)[28:]
 
     def parse_answer_api(self, info) -> namedtuple:
-        return self.games_info(
+        return PostCrackWatch(
             title=str(info['title']),
             protections=str(*info['protections']),
             groups=str(*info['groups']),

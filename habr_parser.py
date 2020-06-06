@@ -4,6 +4,7 @@ import os.path
 from collections import namedtuple
 import lxml.html
 from lxml import etree
+from structures import PostHabr
 
 
 class Habr(object):
@@ -31,7 +32,7 @@ class Habr(object):
 
         self.list_post = []
 
-        self.post = namedtuple('post', ['title', 'href', 'tags', 'text', 'key'])
+        #self.post = namedtuple('post', ['title', 'href', 'tags', 'text', 'key'])
 
         if os.path.exists(self.file_save):
             self.lastpost = open(self.file_save).read()
@@ -70,7 +71,7 @@ class Habr(object):
                 text_post_lxml = tree.xpath(f'//*[@id="{id}"]/article/div/div/text()')
                 for tag in tags:
                     self.tags.append(tag.text.strip())
-                self.list_post.append(self.post(
+                self.list_post.append(PostHabr(
                     title=title,
                     href=href,
                     tags=self.parse_tags(self.tags[:-4]),

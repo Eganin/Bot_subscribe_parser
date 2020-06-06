@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup as bs4
 from collections import namedtuple
 from typing import List, NamedTuple
 import re
+from structures import PostStopGame
 
 
 class StopGame(object):
@@ -11,7 +12,7 @@ class StopGame(object):
 
     def __init__(self, file_save: str = 'last_key_parser.txt') -> None:
         self.base_url = 'https://stopgame.ru/review/new/'
-        self.info = namedtuple('game', ['poster', 'text', 'score', 'title', 'href'])
+        # self.info = namedtuple('game', ['poster', 'text', 'score', 'title', 'href'])
         self.new_url = 'https://stopgame.ru'
         self.href_game = []
         self.file_save = file_save
@@ -78,11 +79,11 @@ class StopGame(object):
             except:
                 href = ''
 
-            return self.info(poster=poster.group(1),
-                             text=excpert_text,
-                             score=score,
-                             title=title,
-                             href=href)
+            return PostStopGame(poster=poster.group(1),
+                                text=excpert_text,
+                                score=score,
+                                title=title,
+                                href=href)
 
     def sum_score(self, score):
         '''преобразователь в оценку'''

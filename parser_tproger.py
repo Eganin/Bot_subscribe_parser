@@ -4,6 +4,7 @@ import os.path
 from collections import namedtuple
 import lxml.html
 from lxml import etree
+from structures import PostTproger
 
 
 class Tproger(object):
@@ -14,7 +15,7 @@ class Tproger(object):
 
         self.cnt = -1
 
-        self.post_info = namedtuple('post', ['href', 'title', 'text', 'key'])
+        #self.post_info = namedtuple('post', ['href', 'title', 'text', 'key'])
 
         self.file_save = file_save
 
@@ -44,7 +45,7 @@ class Tproger(object):
             title = tree.xpath(f'//*[@id="{id}"]/div[1]/div[1]/h2/text()')
             text = tree.xpath(f'//*[@id="{id}"]/div[1]/div[2]/div/p/text()')
             if self.lastpost != id:
-                return self.post_info(
+                return PostTproger(
                     href=href,
                     title=self.parse_title_text(title),
                     text=self.parse_title_text(text),
