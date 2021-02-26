@@ -1,6 +1,6 @@
 aiodns==2.0.0
 aiogram==2.8
-aiohttp==3.6.2
+aiohttp==3.7.4
 async-timeout==3.0.1
 asynco==0.0.5
 attrs==19.3.0
